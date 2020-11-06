@@ -78,7 +78,7 @@ function App() {
                 <h3>Weaknesses</h3>
                 <ul>
                   {weaknesses.map((weakness) => (
-                    <li key={weakness.name}>{weakness.name}</li>
+                    <li key={weakness.name}>{capitalize(weakness.name)}</li>
                   ))}
                 </ul>
               </div>
