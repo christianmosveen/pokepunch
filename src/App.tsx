@@ -23,7 +23,7 @@ function App() {
 
     try {
       const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+        `https://pokeapi.co/api/v2/pokemon/${pokemonName?.toLowerCase()}`
       );
       const result = (await res.json()) as Pokemon;
       setPokemon(result);
@@ -37,9 +37,11 @@ function App() {
         })
       );
 
-      const weaknesses = typeResponses.flatMap(
-        (res) => res.damage_relations.double_damage_from
-      );
+      const weaknesses = typeResponses
+        .flatMap((res) => res.damage_relations.double_damage_from)
+        .filter(
+          (obj, i, arr) => arr.findIndex((o) => o.name === obj.name) === i
+        );
       setWeaknesses(weaknesses);
 
       setStatus(Status.SUCCESS);
