@@ -1,66 +1,51 @@
 import React, { useState, FormEvent } from "react";
 import "./App.css";
+import { Pokemon, PokemonType } from "./api";
 
-interface Pokemon {
-  name: string;
-  types: TypeSlot[];
-  sprites: Sprites;
-}
-
-interface TypeSlot {
-  type: PokemonType;
-}
-
-interface PokemonType {
-  name: string;
-  url: string;
-}
-
-interface Sprites {
-  front_default: string;
+enum Status {
+  IDLE,
+  LOADING,
+  SUCCESS,
+  ERROR,
 }
 
 function App() {
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoaded, setIsLoaded] = useState(true);
+  const [status, setStatus] = useState<Status>(Status.IDLE);
   const [pokemon, setPokemon] = useState<Pokemon>();
   const [weaknesses, setWeaknesses] = useState<PokemonType[]>([]);
   const [pokemonName, setPokemonName] = useState("");
 
-  const handleSubmit = (event: FormEvent) => {
-    setIsLoaded(false);
-    setWeaknesses([]);
-    let pokemon: Pokemon;
-    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          pokemon = result;
-          setPokemon(pokemon);
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
 
-          Promise.all(
-            pokemon?.types.map((t) =>
-              fetch(`https://pokeapi.co/api/v2/type/${t.type.name}`)
-            )
-          ).then((responses) =>
-            Promise.all(responses.map((res) => res.json())).then((results) =>
-              results.forEach((result) => {
-                result.damage_relations.double_damage_from.map(
-                  (pt: PokemonType) =>
-                    setWeaknesses((weaknesses) => [...weaknesses, pt])
-                );
-              })
-            )
+    // TODO: Prøvd SWR
+    setStatus(Status.LOADING);
+
+    try {
+      const res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+      );
+      const result = (await res.json()) as Pokemon;
+      setPokemon(result);
+
+      const typeResponses = await Promise.all(
+        result?.types.map(async (t) => {
+          const typeRes = await fetch(
+            `https://pokeapi.co/api/v2/type/${t.type.name}`
           );
-          setIsLoaded(true);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
+          return (await typeRes.json()) as any;
+        })
       );
 
-    event.preventDefault();
+      const weaknesses = typeResponses.flatMap(
+        (res) => res.damage_relations.double_damage_from
+      );
+      setWeaknesses(weaknesses);
+
+      setStatus(Status.SUCCESS);
+    } catch {
+      setStatus(Status.ERROR);
+    }
   };
 
   return (
@@ -78,11 +63,9 @@ function App() {
       </form>
 
       <div id="pokemon">
-        {error ? (
-          <span>Error: {error.message}</span>
-        ) : !isLoaded ? (
-          <span>Loading..</span>
-        ) : (
+        {status === Status.ERROR && <span>ERROIR!</span>}
+        {status === Status.LOADING && <span>Loadzing..</span>}
+        {status === Status.SUCCESS && (
           <div>
             <h2>{capitalize(pokemon?.name)}</h2>
             <img
