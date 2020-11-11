@@ -17,10 +17,9 @@ function App() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
-    // TODO: Prøvd SWR
     setStatus(Status.LOADING);
 
+    // TODO: Prøv SWR
     try {
       const res = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${pokemonName?.toLowerCase()}`
@@ -51,22 +50,30 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="container">
       <h1>Pokémon Punch Up</h1>
       <form onSubmit={handleSubmit}>
-        <label>
-          Pokemon:
-          <input
-            name="pokemon"
-            value={pokemonName}
-            onChange={(e) => setPokemonName(e.target.value)}
-          />
-        </label>
+        <div className="row">
+          <div className="six columns">
+            <input
+              type="search"
+              className="u-full-width"
+              id="pokemonName"
+              name="pokemon"
+              placeholder="Pokémon name"
+              value={pokemonName}
+              onChange={(e) => setPokemonName(e.target.value)}
+            />
+          </div>
+          <div className="six columns">
+            <input className="button-primary" type="submit" value="Submit" />
+          </div>
+        </div>
       </form>
 
       <div id="pokemon">
-        {status === Status.ERROR && <span>ERROIR!</span>}
-        {status === Status.LOADING && <span>Loadzing..</span>}
+        {status === Status.ERROR && <span>ErrrROAR!</span>}
+        {status === Status.LOADING && <span>Loading..</span>}
         {status === Status.SUCCESS && (
           <div>
             <h2>{capitalize(pokemon?.name)}</h2>
