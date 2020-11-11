@@ -54,9 +54,9 @@ function App() {
       <h1>Pokémon Punch Up</h1>
       <form onSubmit={handleSubmit}>
         <div className="row">
-          <div className="six columns">
+          <div className="nine columns">
             <input
-              type="search"
+              type="text"
               className="u-full-width"
               id="pokemonName"
               name="pokemon"
@@ -65,8 +65,12 @@ function App() {
               onChange={(e) => setPokemonName(e.target.value)}
             />
           </div>
-          <div className="six columns">
-            <input className="button-primary" type="submit" value="Submit" />
+          <div className="three columns">
+            <input
+              className="button-primary u-full-width"
+              type="submit"
+              value="Find Pokémon"
+            />
           </div>
         </div>
       </form>
