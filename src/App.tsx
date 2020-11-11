@@ -52,7 +52,7 @@ function App() {
   return (
     <div className="container">
       <h1>Pokémon Punch Up</h1>
-      <form onSubmit={handleSubmit}>
+      <form action="/" onSubmit={handleSubmit}>
         <div className="row">
           <div className="nine columns">
             <input

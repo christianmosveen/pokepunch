@@ -1,4 +1,5 @@
 input[type="text"],
+input[type="search"],
 textarea {
   font-size: 1.6rem;
 }
