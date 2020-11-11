@@ -56,7 +56,7 @@ function App() {
         <div className="row">
           <div className="nine columns">
             <input
-              type="text"
+              type="search"
               className="u-full-width"
               id="pokemonName"
               name="pokemon"
